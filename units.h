@@ -71,6 +71,13 @@ struct init<0, PlaceToAdd>
 {};
 
 
+template<int ... Values>
+constexpr unsigned vec_size(static_vector<Values ...>&&)
+{
+    return sizeof...(Values);
+}
+
+
 /*
 * check if two vectors have the same length
 */
@@ -81,50 +88,18 @@ struct is_same_vec_len
 
 
 template<
-    int Value1,
     int ... Value1s,
-    int Value2,
     int ...Value2s
 >
 struct is_same_vec_len
 <
-    static_vector<Value1, Value1s...>,
-    static_vector<Value2, Value2s...>
->
-{
-    static constexpr bool value = true &&
-        is_same_vec_len
-            <
-                static_vector<Value1s...>,
-                static_vector<Value2s...>
-            >::value;
-};
-
-template<>
-struct is_same_vec_len<empty_vector, empty_vector>
-{
-    static constexpr bool value = true;
-};
-
-template<int ...Value2s>
-struct is_same_vec_len
-<
-    empty_vector,
+    static_vector<Value1s...>,
     static_vector<Value2s...>
 >
 {
-    static constexpr bool value = false;
-};
-
-
-template<int ...Value1s>
-struct is_same_vec_len
-<
-    static_vector<Value1s...>,
-    empty_vector
->
-{
-    static constexpr bool value = false;
+    static constexpr bool value = (
+        vec_size(typename static_vector<Value1s...>::type()) == vec_size(typename static_vector<Value2s...>::type())
+    );
 };
 
 
