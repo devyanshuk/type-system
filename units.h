@@ -71,6 +71,63 @@ struct init<0, PlaceToAdd>
 {};
 
 
+/*
+* check if two vectors have the same length
+*/
+
+template <typename Vector1, typename Vector2>
+struct is_same_vec_len
+{};
+
+
+template<
+    int Value1,
+    int ... Value1s,
+    int Value2,
+    int ...Value2s
+>
+struct is_same_vec_len
+<
+    static_vector<Value1, Value1s...>,
+    static_vector<Value2, Value2s...>
+>
+{
+    static constexpr bool value = true &&
+        is_same_vec_len
+            <
+                static_vector<Value1s...>,
+                static_vector<Value2s...>
+            >::value;
+};
+
+template<>
+struct is_same_vec_len<empty_vector, empty_vector>
+{
+    static constexpr bool value = true;
+};
+
+template<int ...Value2s>
+struct is_same_vec_len
+<
+    empty_vector,
+    static_vector<Value2s...>
+>
+{
+    static constexpr bool value = false;
+};
+
+
+template<int ...Value1s>
+struct is_same_vec_len
+<
+    static_vector<Value1s...>,
+    empty_vector
+>
+{
+    static constexpr bool value = false;
+};
+
+
 
 /*
 *  Given two static vectors x and y, add x_i
@@ -78,6 +135,7 @@ struct init<0, PlaceToAdd>
 */
 
 template<typename Vector1, typename Vector2>
+    requires requires (Vector1, Vector2) { is_same_vec_len<Vector1, Vector2>::value; }
 struct add
 {};
 
@@ -161,6 +219,7 @@ struct accumulate
 */
 
 template<typename Vector1, typename Vector2>
+    requires requires(Vector1, Vector2) { is_same_vec_len<Vector1, Vector2>::value; }
 struct subtract
 {};
 
