@@ -31,11 +31,26 @@ __Force, in Newton kg . m . s <sup>-2</sup>, will be represented as__
 static_vector<-2, 1, 1, 0, 0, 0, 0>
 ```
 
-## Sample Usage
+## Sample Usage ( c++ >= 20 required)
 
+__main.cpp__
 ```c++
 #include "units.h"
 #include <iostream>
+
+template<int ... Values>
+constexpr unsigned _size(static_vector<Values ...>&&)
+{
+    return sizeof...(Values);
+}
+
+template <int ...A>
+void print_exponents(static_vector<A ...>)
+{
+    (void(std::cout << A << " ") , ...);
+    std::cout << std::endl;
+}
+
 
 enum class si_units
 {
@@ -68,7 +83,20 @@ int main()
 
     std::cout << (v1 + v2).value() << std::endl;
 
+    print_exponents(decltype(v1 + v2)::unit::exponents());
+
+    static_assert(_size(decltype(v2)::unit::exponents()) == static_cast<size_t>(si_units::_count));
+
+    static_assert(is_same_vec<decltype(v2)::unit::exponents, static_vector<-1, 1, 0, 0, 0, 0, 0>>::value);
+
     // Won't compile
     //std::cout << (l + t).value() << std::endl;
 }
+```
+
+```
+$ g++-11 -std=c++20 -o main main.cpp
+$ ./main
+4.83333
+-1 1 0 0 0 0 0
 ```
