@@ -26,7 +26,7 @@ __Time, in seconds will be represented as__
 static_vector<1, 0, 0, 0, 0, 0, 0>
 ```
 
-__Force, in Newton $kg . m . s ^{-2}$, will be represented as__
+__Force, in Newton kg . m . s <sup>-2</sup>, will be represented as__
 ```c++
 static_vector<-2, 1, 1, 0, 0, 0, 0>
 ```
